@@ -1,0 +1,337 @@
+<!--<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Office Converter | Convertisseur Professionnel</title>
+    <style>
+        /* ... Insère ici tout le bloc <style> de ton index.jsp original ... */
+        :root { --bg-primary: #0b1220; /* etc... */ }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF Office <span>Converter</span></h1>
+            <p>Convertissez vos documents en un clin d'œil avec une précision chirurgicale.</p>
+        </header>
+
+        <form th:action="@{/convert}" method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="converter-card">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" name="file" id="fileInput" required />
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p id="uploadText">Glissez-déposez votre fichier ici ou cliquez pour parcourir</p>
+                    <div class="file-name" id="fileName">
+                        <i class="fas fa-file-alt"></i>
+                        <span id="fileNameText">document.pdf</span>
+                    </div>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="WORD_TO_PDF" id="wordToPdf" checked />
+                        <label for="wordToPdf">
+                            <i class="fas fa-file-word"></i>
+                            <span>Word vers PDF</span>
+                        </label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_WORD" id="pdfToWord" />
+                        <label for="pdfToWord">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>PDF vers Word</span>
+                        </label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_EXCEL" id="pdfToExcel" />
+                        <label for="pdfToExcel">
+                            <i class="fas fa-file-excel"></i>
+                            <span>PDF vers Excel</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="convert-btn" id="convertBtn">
+                    <span class="btn-text">Convertir maintenant</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        /* ... Insère ici tout le bloc <script> de ton index.jsp original ... */
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Office Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles extraits de votre modèle original */
+        :root {
+            --bg-primary: #0b1220;
+            --bg-secondary: #162033;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container { width: 100%; max-width: 800px; padding: 20px; text-align: center; }
+        .converter-card {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .drop-zone {
+            border: 2px dashed #334155;
+            border-radius: 15px;
+            padding: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .drop-zone:hover { border-color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+        .drop-zone input { position: absolute; width: 100%; height: 100%; top:0; left:0; opacity:0; cursor:pointer; }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .option-item label {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .option-item input:checked + label { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+        .convert-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .file-name { margin-top: 15px; color: var(--accent); font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PDF Office <span>Converter</span></h1>
+            <p>Convertissez vos documents avec précision.</p>
+        </header>
+
+        <form th:action="@{/convert}" method="POST" enctype="multipart/form-data">
+            <div class="converter-card">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" name="file" id="fileInput" required onchange="updateFileName()" />
+                    <i class="fas fa-cloud-upload-alt fa-3x" style="color: var(--accent)"></i>
+                    <p>Glissez-déposez ou cliquez pour parcourir</p>
+                    <div class="file-name" id="fileNameDisplay"></div>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="WORD_TO_PDF" id="m1" checked style="display:none"/>
+                        <label for="m1"><i class="fas fa-file-word"></i> Word vers PDF</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_WORD" id="m2" style="display:none"/>
+                        <label for="m2"><i class="fas fa-file-pdf"></i> PDF vers Word</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_EXCEL" id="m3" style="display:none"/>
+                        <label for="m3"><i class="fas fa-file-excel"></i> PDF vers Excel</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="convert-btn">Convertir maintenant</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updateFileName() {
+            const input = document.getElementById('fileInput');
+            const display = document.getElementById('fileNameDisplay');
+            if(input.files.length > 0) {
+                display.innerText = "Fichier sélectionné : " + input.files[0].name;
+                display.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Convertisseur Professionnel | PDF Office</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0b1220;
+            --bg-secondary: #162033;
+            --accent: #3b82f6;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container { width: 100%; max-width: 800px; padding: 20px; text-align: center; }
+        .converter-card {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .drop-zone {
+            border: 2px dashed #334155;
+            border-radius: 15px;
+            padding: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+        .drop-zone:hover { border-color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+        .drop-zone input { position: absolute; width: 100%; height: 100%; top:0; left:0; opacity:0; cursor:pointer; }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .option-item input { display: none; }
+        .option-item label {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: 0.2s;
+        }
+        .option-item input:checked + label { border-color: var(--accent); background: rgba(59,130,246,0.1); }
+        .convert-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .convert-btn:hover { background: #2563eb; transform: translateY(-2px); }
+        .file-name { margin-top: 15px; color: var(--accent); font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header style="margin-bottom: 30px;">
+            <h1>PDF Office <span style="color:var(--accent)">Converter</span></h1>
+            <p style="color:var(--text-dim)">Simple. Rapide. Sécurisé.</p>
+        </header>
+
+        <form th:action="@{/convert}" method="POST" enctype="multipart/form-data">
+            <div class="converter-card">
+                <div class="drop-zone" id="dropZone">
+                    <input type="file" name="file" id="fileInput" required onchange="handleFileSelect()" />
+                    <i class="fas fa-cloud-upload-alt fa-3x" style="color: var(--accent); margin-bottom:15px;"></i>
+                    <p id="instructionText">Cliquez ou glissez le fichier ici</p>
+                    <div class="file-name" id="fileNameDisplay"></div>
+                </div>
+
+                <div class="options-grid">
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="WORD_TO_PDF" id="m1" checked onchange="updateFileFilter()"/>
+                        <label for="m1"><i class="fas fa-file-word"></i> Word vers PDF</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_WORD" id="m2" onchange="updateFileFilter()"/>
+                        <label for="m2"><i class="fas fa-file-pdf"></i> PDF vers Word</label>
+                    </div>
+                    <div class="option-item">
+                        <input type="radio" name="mode" value="PDF_TO_EXCEL" id="m3" onchange="updateFileFilter()"/>
+                        <label for="m3"><i class="fas fa-file-excel"></i> PDF vers Excel</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="convert-btn">Démarrer la conversion</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // 1. Gère le type de fichiers autorisés selon le mode
+        function updateFileFilter() {
+            const fileInput = document.getElementById('fileInput');
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            
+            if (mode === "WORD_TO_PDF") {
+                fileInput.accept = ".doc, .docx";
+            } else {
+                fileInput.accept = ".pdf";
+            }
+            // Reset si changement de mode
+            fileInput.value = "";
+            document.getElementById('fileNameDisplay').style.display = "none";
+            document.getElementById('instructionText').style.display = "block";
+        }
+
+        // 2. Affiche le nom du fichier sélectionné
+        function handleFileSelect() {
+            const input = document.getElementById('fileInput');
+            const display = document.getElementById('fileNameDisplay');
+            const instruction = document.getElementById('instructionText');
+            
+            if(input.files.length > 0) {
+                display.innerText = "Prêt : " + input.files[0].name;
+                display.style.display = "block";
+                instruction.style.display = "none";
+            }
+        }
+
+        // Initialisation au chargement
+        window.onload = updateFileFilter;
+    </script>
+</body>
+</html>

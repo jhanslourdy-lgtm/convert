@@ -1,0 +1,414 @@
+<!--<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Conversion Terminée | PDF Office Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ... Insère ici tout le bloc <style> de ton result.jsp original ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1>Conversion réussie !</h1>
+            <p class="file-info">Votre fichier <strong th:text="${fileName}">nom_du_fichier</strong> est prêt.</p>
+            
+            <div class="action-buttons">
+                <a th:href="@{/download/{t}(t=${token})}" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Télécharger le fichier
+                </a>
+                
+                <a th:if="${previewAvailable}" 
+                   th:href="@{/preview/{t}(t=${token})}" 
+                   target="_blank" class="btn btn-secondary">
+                    <i class="fas fa-eye"></i> Aperçu PDF
+                </a>
+            </div>
+            
+            <div class="share-section">
+                <p>Lien de partage temporaire :</p>
+                <div class="share-link">
+                    <input type="text" th:value="${shareLink}" id="shareLinkInput" readonly>
+                    <button onclick="copyToClipboard()" id="copyBtn">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <a th:href="@{/}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Convertir un autre fichier
+            </a>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function copyToClipboard() {
+            const copyText = document.getElementById("shareLinkInput");
+            copyText.select();
+            document.execCommand("copy");
+            // Optionnel : ajouter un toast de succès
+        }
+
+        // Garde tes autres scripts d'animation ici
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversion Terminée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg-primary: #0b1220; --bg-secondary: #162033; --accent: #10b981; }
+        body { background: var(--bg-primary); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .success-card { background: var(--bg-secondary); padding: 40px; border-radius: 20px; text-align: center; max-width: 500px; width: 90%; }
+        .btn { display: inline-block; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 10px; transition: 0.3s; }
+        .btn-download { background: var(--accent); color: white; }
+        .btn-preview { background: #3b82f6; color: white; }
+        .back-link { display: block; margin-top: 20px; color: #94a3b8; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <i class="fas fa-check-circle fa-4x" style="color: var(--accent); margin-bottom: 20px;"></i>
+        <h1>Conversion réussie !</h1>
+        <p>Votre fichier <strong th:text="${fileName}">nom_du_fichier</strong> est prêt.</p>
+        
+        <div style="margin-top: 30px;">
+            <a th:href="@{/download/{t}(t=${token})}" class="btn btn-download">
+                <i class="fas fa-download"></i> Télécharger
+            </a>
+            
+            <a th:if="${previewAvailable}" th:href="@{/preview/{t}(t=${token})}" target="_blank" class="btn btn-preview">
+                <i class="fas fa-eye"></i> Aperçu PDF
+            </a>
+        </div>
+
+        <a th:href="@{/}" class="back-link"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Terminée | PDF Office</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0b1220;
+            --bg-secondary: #162033;
+            --accent-success: #10b981;
+            --accent-blue: #3b82f6;
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .success-card {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-box {
+            font-size: 4rem;
+            color: var(--accent-success);
+            margin-bottom: 20px;
+        }
+
+        h1 { margin-bottom: 10px; font-size: 1.8rem; }
+        .file-info { color: var(--text-dim); margin-bottom: 30px; }
+        .file-info strong { color: var(--accent-blue); }
+
+        /* Classes demandées : Download et Preview */
+        .btn-group { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-download {
+            background-color: var(--accent-success);
+            color: white;
+        }
+        .btn-download:hover { background-color: #059669; transform: scale(1.02); }
+
+        .btn-preview {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+        .btn-preview:hover { background-color: #2563eb; transform: scale(1.02); }
+
+        /* Section Partager */
+        .share-container {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #2d3748;
+        }
+
+        .share-label {
+            display: block;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .share-box {
+            display: flex;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 5px;
+            border: 1px solid #334155;
+        }
+
+        .share-box input {
+            background: transparent;
+            border: none;
+            color: var(--accent-blue);
+            padding: 8px;
+            flex: 1;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: var(--accent-blue);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .copy-btn:active { transform: scale(0.9); }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 25px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { color: white; }
+
+        #toast {
+            visibility: hidden;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 10px;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #toast.show { visibility: visible; animation: fadeInOut 2s; }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            20%, 80% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="success-card">
+        <div class="icon-box">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Conversion terminée !</h1>
+        <p class="file-info">Votre fichier <strong th:text="${fileName}">document.pdf</strong> est prêt.</p>
+
+        <div class="btn-group">
+            <a th:href="@{/download/{t}(t=${token})}" class="btn btn-download">
+                <i class="fas fa-download"></i> Télécharger le fichier
+            </a>
+
+            <a th:if="${previewAvailable}" th:href="@{/preview/{t}(t=${token})}" target="_blank" class="btn btn-preview">
+                <i class="fas fa-eye"></i> Voir l'aperçu
+            </a>
+        </div>
+
+        <div class="share-container">
+            <span class="share-label">Lien de téléchargement direct :</span>
+            <div class="share-box">
+                <input type="text" id="shareUrl" th:value="${#request.requestURL.toString().replace('/convert', '/download/' + token)}" readonly>
+                <button class="copy-btn" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>
+
+        <a th:href="@{/}" class="back-link">
+            <i class="fas fa-arrow-left"></i> Convertir un autre fichier
+        </a>
+    </div>
+
+    <div id="toast">Lien copié dans le presse-papier !</div>
+
+    <script>
+        function copyToClipboard() {
+            const copyText = document.getElementById("shareUrl");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // Pour mobile
+            
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                const toast = document.getElementById("toast");
+                toast.className = "show";
+                setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 2000);
+            });
+        }
+    </script>
+
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion Terminée</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0b1220;
+            --bg-secondary: #162033;
+            --accent-success: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-share: #6366f1;
+        }
+        body {
+            background: var(--bg-primary);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .btn-stack { display: flex; flex-direction: column; gap: 12px; margin: 25px 0; }
+        .btn {
+            padding: 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+        .btn:hover { transform: scale(1.02); }
+        .btn-download { background: var(--accent-success); }
+        .btn-preview { background: var(--accent-blue); }
+        .btn-share { background: var(--accent-share); }
+        
+        .share-url-box {
+            background: #0f172a;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--accent-blue);
+            word-break: break-all;
+            margin-top: 10px;
+            border: 1px solid #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <i class="fas fa-check-circle fa-4x" style="color: var(--accent-success); margin-bottom: 20px;"></i>
+        <h2>Travail terminé !</h2>
+        <p style="color: #94a3b8">Fichier : <span th:text="${fileName}" style="color: white">document.docx</span></p>
+
+        <div class="btn-stack">
+            <a th:href="@{/download/{t}(t=${token})}" class="btn btn-download">
+                <i class="fas fa-download"></i> Télécharger le fichier
+            </a>
+
+            <a th:if="${previewAvailable}" th:href="@{/preview/{t}(t=${token})}" target="_blank" class="btn btn-preview">
+                <i class="fas fa-eye"></i> Voir l'aperçu PDF
+            </a>
+
+            <button onclick="shareLink()" class="btn btn-share">
+                <i class="fas fa-share-alt"></i> Partager avec un ami
+            </button>
+        </div>
+
+        <input type="hidden" id="rawUrl" th:value="${#request.requestURL.toString().replace('/convert', '/download/' + token)}">
+
+        <a th:href="@{/}" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">
+            <i class="fas fa-arrow-left"></i> Revenir à l'accueil
+        </a>
+    </div>
+
+    <script th:inline="javascript">
+        function shareLink() {
+            const urlToShare = document.getElementById('rawUrl').value;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Mon document converti',
+                    text: 'Salut ! Voici mon fichier converti via PDF Office.',
+                    url: urlToShare
+                }).catch(console.error);
+            } else {
+                // Fallback : copie dans le presse-papier
+                navigator.clipboard.writeText(urlToShare);
+                alert("Lien copié ! Vous pouvez l'envoyer à vos amis.");
+            }
+        }
+    </script>
+</body>
+</html>
